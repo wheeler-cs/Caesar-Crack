@@ -37,7 +37,9 @@ public:
     void print_table();
 
     void set_char_value (char, double);
+    char get_char_by_index (unsigned int);
     double get_char_frequency (char);
+    void sort_data();
 
 private:
     std::vector<char> alphabet;
@@ -68,6 +70,9 @@ public:
     void set_keyshift_table_value (char, double);
     void calc_ciphertext_composition();
     void calc_shift_likelihoods();
+    void sort_keyshift_table();
+    std::string decrypt_ciphertext(std::string, std::string);
+    void print_caesar_results();
 
 
     void decrypt_caesar_cipher();
