@@ -1,3 +1,16 @@
+/**
+ * @file decrypt.hpp
+ * @author Drew Wheeler
+ * @date 2023-02-09
+ * 
+ * @brief Contains definitions for the FrequencyTable and DecryptEngine classes and several
+ *        constants.
+ * 
+ * @see decrypt.cpp
+ * 
+ */
+
+
 #ifndef DECRYPT_H
 #define DECRYPT_H
 
@@ -6,6 +19,10 @@
 #include <string>
 #include <vector>
 
+/*
+ * Constants here are just to make getting a MVP out. Realistically this information should be
+ * stored in and read from a file.
+ */
 const char ALPHABET_SIZE = 26;
 const char ALPHABET[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                          'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
@@ -37,14 +54,36 @@ public:
     void print_table();
 
     void set_char_value (char, double);
-    char get_char_by_index (unsigned int);
+    char get_char_by_index (unsigned int idx) { return alphabet[idx]; }
     double get_char_frequency (char);
+    unsigned int get_alphabet_size() { return alphabet.size(); }
     void sort_data();
 
 private:
+    /**
+     * @var std::vector<char> alphabet
+     * 
+     * Holds a list of characters that are part of the alphabet being worked with.
+     */
     std::vector<char> alphabet;
+
+    /**
+     * @var std::vector<double> frequencies
+     * 
+     * Stores frequencies of characters in the alphabet vector. Context of values may vary. 
+     */
     std::vector<double> frequencies;
 };
+/**
+ * @class FrequencyTable "include/decrypt.hpp"
+ * 
+ * @brief Table containing char-double pairs used as part of the decryption process.
+ * 
+ * Used in different contexts to store paired data correlating a character to a frequency.
+ */
+
+
+
 
 
 class DecryptEngine {
@@ -88,5 +127,13 @@ private:
     FrequencyTable ciphertext_frequency;
     FrequencyTable keyshift_table;
 };
+/**
+ * @class DecryptEngine "include/decrypt.hpp"
+ * 
+ * @brief Class responsible for implementing algorithms to decrypt enciphered data.
+ * 
+ * All decryption operations are performed through the DecryptEngine class. Contains several
+ * instances of the FrequencyTable class to assist with statistical analysis.
+ */
 
 #endif

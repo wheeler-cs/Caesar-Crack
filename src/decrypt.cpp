@@ -16,10 +16,6 @@ void FrequencyTable::set_char_value (char tab_char, double char_freq) {
     }
 }
 
-char FrequencyTable::get_char_by_index (unsigned int idx) {
-    return alphabet[idx];
-}
-
 double FrequencyTable::get_char_frequency (char key) {
     for (unsigned int i = 0; i < alphabet.size(); i++) {
         if (alphabet[i] == key)
@@ -138,12 +134,14 @@ std::string DecryptEngine::decrypt_ciphertext(std::string ct, std::string key) {
 }
 
 void DecryptEngine::print_caesar_results() {
-    // std::cout << "Most Likely" << std::endl;
     std::string char_converter = "";
-    for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
-        char_converter = "";
+    std::cout << "Most Likely to Least Likely" << std::endl;
+    for (unsigned int i = keyshift_table.get_alphabet_size() - 1; i > 0; i--) {
+        char_converter = ""; // Character must be converted to string to be used in decryption
         char_converter += keyshift_table.get_char_by_index(i);
-        std::cout << decrypt_ciphertext(ciphertext, char_converter) << std::endl;
+        std::cout << char_converter << "(" << (short)(char_converter[0] - 'A') << "): "
+                  << decrypt_ciphertext(ciphertext, char_converter) << std::endl;
+        if (i == 0) break; // End loop because i is unsigned
     }
 }
 
