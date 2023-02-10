@@ -62,7 +62,7 @@ void VigenereDecipher::calculate_char_instances() {
     }
 
     unsigned int front = 0, back = 0;
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
         for (front = 0; front < temp_ct.size(); front++) {
             if (temp_ct[front] == ALPHABET[i])
                 break;
@@ -81,6 +81,8 @@ void VigenereDecipher::calculate_char_instances() {
         if (back >= front + 1) {
             set_char_occurrence(ALPHABET[i], (back - front) + 1);
         }
+        else
+            set_char_occurrence(ALPHABET[i], 0);
     }
 }
 
@@ -104,7 +106,60 @@ void VigenereDecipher::calculate_ioc() {
     }
 
     index_of_coincidence = summation_multiplier * (double)(summation);
-    std::cout << index_of_coincidence;
+}
+
+void VigenereDecipher::calculate_ioc_key_length() {
+    double high_difference = 0.0, low_difference = 0.0;
+
+    for (unsigned int i = 0; i < (IOC_TABLE_SIZE - 1); i++) {
+        if ((IOC_KEY_LENGTH[i] >= index_of_coincidence) && (IOC_KEY_LENGTH[i+1] < index_of_coincidence)) {
+            high_difference = IOC_KEY_LENGTH[i] - index_of_coincidence;
+            low_difference = index_of_coincidence - IOC_KEY_LENGTH[i+1];
+            // Here the index can be used to determine what the key size should be
+            if (high_difference >= low_difference)
+                ioc_key_length = i;
+            else
+                ioc_key_length = i+1;
+            // Key should at least be a length of 1
+            if (ioc_key_length == 0)
+                ioc_key_length = 1;
+            break;
+        }
+    }
+}
+
+void VigenereDecipher::split_alphabet_iocs() {
+    std::vector<std::string> subalphabets;
+    std::string temp_ct = ciphertext;
+
+    for (unsigned int i = 0; i < temp_ct.size();) {
+        if (temp_ct[i] == ' ')
+            temp_ct.erase(temp_ct.begin() + i);
+        else
+            i++;
+    }
+
+    // Initialize the number of subalphabets needed based on key length
+    for (unsigned int i = 0; i < ioc_key_length; i++) {
+        subalphabets.push_back("");
+    }
+
+    // Store characters from ciphertext in alphabets in mod 3 order
+    for (unsigned int i = 0; i < temp_ct.length(); i++) {
+        subalphabets[i % ioc_key_length] += temp_ct[i];
+    }
+
+    double avg_ioc = 0.0;
+    VigenereDecipher temp_vd = VigenereDecipher();
+    for (unsigned int i = 0; i < ioc_key_length; i++) {
+        temp_vd.set_ciphertext(subalphabets[i]);
+        temp_vd.calculate_char_instances();
+        temp_vd.calculate_ioc();
+        avg_ioc += temp_vd.get_ioc();
+    }
+
+    avg_ioc /= ioc_key_length;
+    std::cout << avg_ioc << std::endl;
 }
 
 void VigenereDecipher::set_char_occurrence(char c, unsigned int ui) {
@@ -115,6 +170,10 @@ void VigenereDecipher::set_char_occurrence(char c, unsigned int ui) {
         }
     }
 }
+
+
+
+
 
 double DecryptEngine::get_alphabet_frequency (char key) {
     return (alphabet_frequency.get_char_frequency (key));
@@ -147,7 +206,7 @@ void DecryptEngine::calc_ciphertext_composition () {
     // Calculate the number of each character in the sorted string
     unsigned int front = 0, back = 0;
     double char_freq = 0.0;
-    for (int i = 0; i < ALPHABET_SIZE; i++) {
+    for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
         for (front = 0; front < temp_ct.size(); front++) {
             if (temp_ct[front] == ALPHABET[i])
                 break;

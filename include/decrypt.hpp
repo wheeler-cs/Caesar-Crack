@@ -23,12 +23,16 @@
  * Constants here are just to make getting a MVP out. Realistically this information should be
  * stored in and read from a file.
  */
-const char ALPHABET_SIZE = 26;
+const unsigned int ALPHABET_SIZE = 26;
 const char ALPHABET[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
                          'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 const double FREQUENCIES[] = { 0.080, 0.015, 0.030, 0.040, 0.130, 0.020, 0.015, 0.060, 0.065, 0.005,
                                0.005, 0.035, 0.030, 0.070, 0.080, 0.020, 0.002, 0.065, 0.060, 0.090,
                                0.030, 0.010, 0.015, 0.005, 0.020, 0.002};
+const unsigned int IOC_TABLE_SIZE = 12; 
+const double IOC_KEY_LENGTH[] = { 1.0000, 0.0660, 0.0520, 0.0473, 0.0449, 0.0435, 0.0426, 0.0419,
+                                  0.0414, 0.0410, 0.0407, 0.0388 };
+
 
 class FrequencyTable {
 public:
@@ -92,6 +96,7 @@ public:
     VigenereDecipher() {
         ciphertext = plaintext = "";
         index_of_coincidence = 0.0;
+        ioc_key_length = 0;
         for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
             alphabet.push_back(ALPHABET[i]);
             char_occurrences.push_back(0);
@@ -102,6 +107,7 @@ public:
         ciphertext = ct;
         plaintext = "";
         index_of_coincidence = 0.0;
+        ioc_key_length = 0;
         for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
             alphabet.push_back(ALPHABET[i]);
             char_occurrences.push_back(0);
@@ -110,15 +116,23 @@ public:
 
     void calculate_char_instances();
     void calculate_ioc();
-    void set_char_occurrence(char, unsigned int);
+    void calculate_ioc_key_length();
+    void split_alphabet_iocs();
+    void set_char_occurrence (char, unsigned int);
+    void set_ciphertext (std::string ct) { ciphertext = ct; }
+
+    double get_ioc() { return index_of_coincidence; }
+    unsigned int get_ioc_key_length() { return ioc_key_length; }
 
 private:
     std::string ciphertext;
     std::string plaintext;
     double index_of_coincidence;
+    unsigned int ioc_key_length;
 
     std::vector<char> alphabet;
     std::vector<unsigned int> char_occurrences;
+
 };
 
 
