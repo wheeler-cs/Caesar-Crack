@@ -42,7 +42,78 @@ void FrequencyTable::sort_data() {
             std::swap (alphabet[i], alphabet[min]);
         }
     }
+}
 
+
+
+
+
+void VigenereDecipher::calculate_char_instances() {
+    std::string temp_ct = ciphertext;
+
+    std::sort(temp_ct.begin(), temp_ct.end());
+
+    // Remove all spaces from string
+    for (unsigned int i = 0; i < temp_ct.size();) {
+        if (temp_ct[i] == ' ')
+            temp_ct.erase(temp_ct.begin() + i);
+        else
+            i++;
+    }
+
+    unsigned int front = 0, back = 0;
+    for (int i = 0; i < ALPHABET_SIZE; i++) {
+        for (front = 0; front < temp_ct.size(); front++) {
+            if (temp_ct[front] == ALPHABET[i])
+                break;
+        }
+
+        for (back = temp_ct.size(); back > 0; back--) {
+            if (temp_ct[back - 1] == ALPHABET[i])
+                break;
+        }
+        /*
+         * front and back did not crossover, add char info to list
+         *
+         * Had to do this weird thing because size of vectors is an unsigned int and the
+         * compiler yells at me if I use signed values. 
+         */
+        if (back >= front + 1) {
+            set_char_occurrence(ALPHABET[i], (back - front) + 1);
+        }
+    }
+}
+
+void VigenereDecipher::calculate_ioc() {
+    std::string temp_ct = ciphertext;
+
+    // Remove all spaces from string
+    for (unsigned int i = 0; i < temp_ct.size();) {
+        if (temp_ct[i] == ' ')
+            temp_ct.erase(temp_ct.begin() + i);
+        else
+            i++;
+    }
+
+    double summation_multiplier = (double)(1/((double)temp_ct.size() * ((double)temp_ct.size() - 1)));
+    unsigned int summation = 0;
+
+    for (unsigned int i = 0; i < char_occurrences.size(); i++) {
+        if (char_occurrences[i] != 0)
+            summation += (char_occurrences[i] * (char_occurrences[i] - 1));
+    }
+
+    index_of_coincidence = summation_multiplier * (double)(summation);
+    std::cout << index_of_coincidence;
+}
+
+void VigenereDecipher::set_char_occurrence(char c, unsigned int ui) {
+    for (unsigned int i = 0; i < alphabet.size(); i++) {
+        if (alphabet[i] == c) {
+            char_occurrences[i] = ui;
+            break;
+        }
+    }
 }
 
 double DecryptEngine::get_alphabet_frequency (char key) {

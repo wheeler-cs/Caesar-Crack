@@ -86,6 +86,45 @@ private:
 
 
 
+class VigenereDecipher {
+public:
+
+    VigenereDecipher() {
+        ciphertext = plaintext = "";
+        index_of_coincidence = 0.0;
+        for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
+            alphabet.push_back(ALPHABET[i]);
+            char_occurrences.push_back(0);
+        }
+    }
+
+    VigenereDecipher (std::string ct) {
+        ciphertext = ct;
+        plaintext = "";
+        index_of_coincidence = 0.0;
+        for (unsigned int i = 0; i < ALPHABET_SIZE; i++) {
+            alphabet.push_back(ALPHABET[i]);
+            char_occurrences.push_back(0);
+        }
+    }
+
+    void calculate_char_instances();
+    void calculate_ioc();
+    void set_char_occurrence(char, unsigned int);
+
+private:
+    std::string ciphertext;
+    std::string plaintext;
+    double index_of_coincidence;
+
+    std::vector<char> alphabet;
+    std::vector<unsigned int> char_occurrences;
+};
+
+
+
+
+
 class DecryptEngine {
 public:
     DecryptEngine() {
