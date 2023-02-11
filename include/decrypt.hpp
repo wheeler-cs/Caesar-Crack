@@ -1,10 +1,10 @@
 /**
  * @file decrypt.hpp
  * @author Drew Wheeler
- * @date 2023-02-09
+ * @date 2023-02-11
  * 
- * @brief Contains definitions for the FrequencyTable and DecryptEngine classes and several
- *        constants.
+ * @brief Contains definitions for the FrequencyTable, VigenereDecipher, and DecryptEngine
+ *        classes and several constants.
  * 
  * @see decrypt.cpp
  * 

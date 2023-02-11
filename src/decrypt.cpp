@@ -150,6 +150,7 @@ void VigenereDecipher::split_alphabet_iocs() {
     }
 
     double avg_ioc = 0.0;
+    // A Vigenere within a Vigenere to calculate the IoC of smaller alphabets
     VigenereDecipher temp_vd = VigenereDecipher();
     for (unsigned int i = 0; i < ioc_key_length; i++) {
         temp_vd.set_ciphertext(subalphabets[i]);
