@@ -50,7 +50,7 @@ void StringAnalysis::rm_data_string_char (char rm)
 // === Analysis Functions =========================================================================
 
 /**
- * @fn StringAnalysis::gen_instance_profile
+ * @fn StringAnalysis::gen_char_instance_profile
  * 
  * @brief Counts the number of instances of each character in a string.
  * 
@@ -58,7 +58,7 @@ void StringAnalysis::rm_data_string_char (char rm)
  * @post Quantities of each character in data_string are counted and stored in char_instances.
  * 
  */
-void StringAnalysis::gen_instance_profile ()
+void StringAnalysis::gen_char_instance_profile ()
 {
     // Store length as a temporary variable to avoid calling .size() repeatidly
     unsigned int str_len = data_string.size();
@@ -97,7 +97,7 @@ void StringAnalysis::gen_instance_profile ()
 }
 
 /**
- * @fn StringAnalysis::gen_frequency_profile
+ * @fn StringAnalysis::gen_char_frequency_profile
  * 
  * @brief Generates a table containing the frequencies of each character in data_string. If no data
  *        exists in char_instances, it will call gen_instance_profile first.
@@ -106,11 +106,11 @@ void StringAnalysis::gen_instance_profile ()
  * @post Character frequencies for data_string are calculated.
  * 
  */
-void StringAnalysis::gen_frequency_profile ()
+void StringAnalysis::gen_char_frequency_profile ()
 {
     // If a valid string is stored, but its composition has not been analyzed, do that first
     if ((data_string.size() > 0) && (char_instances.size() == 0))
-        gen_instance_profile();
+        gen_char_instance_profile();
     
     // Variables used as part of the frequency calculation
     double frequency = 0.0;
@@ -128,16 +128,20 @@ void StringAnalysis::gen_frequency_profile ()
 /**
  * @fn StringAnalysis::calculate_IC
  * 
+ * @brief Calculates the Index of Coincidence for data_string.
+ * 
  */
 void StringAnalysis::calculate_IC ()
 {
     // Generate a frequency profile if one doesn't exist yet
     if ((char_frequencies.size() == 0) && (data_string.size() > 0))
-        gen_frequency_profile();
+        gen_char_frequency_profile();
 
+    // Calculate the IC summation's multiplier based on input string size
     double IC_mult = 1.0 / (((double)data_string.size()) * ((double)data_string.size() - 1.0));
     unsigned int IC_summation = 0;
 
+    // Calculate the summation portion of the IC
     unsigned int instance_list_length = char_instances.size();
     for (unsigned int i = 0; i < instance_list_length; i++)
     {
@@ -180,4 +184,19 @@ void StringAnalysis::print_frequency_profile ()
     {
         std::cout << char_frequencies[i].first << ": " << char_frequencies[i].second << '\n';
     }
+}
+
+
+// === Accessors ==================================================================================
+
+double StringAnalysis::get_char_freq (char c)
+{
+    unsigned int frequency_list_length = char_frequencies.size();
+    for (unsigned int i = 0; i < frequency_list_length; i++)
+    {
+        if (c == char_frequencies[i].first)
+            return char_frequencies[i].second;
+    }
+
+    return 0.0;
 }
