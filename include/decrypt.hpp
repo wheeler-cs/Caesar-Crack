@@ -1,10 +1,9 @@
 /**
  * @file decrypt.hpp
  * @author Drew Wheeler
- * @date 2023-02-11
+ * @date 2023-02-12
  * 
- * @brief Contains definitions for the FrequencyTable, VigenereDecipher, and DecryptEngine
- *        classes and several constants.
+ * @brief Contains definitions for the DecryptEngine class and a few reference tables.
  * 
  * @see decrypt.cpp
  * 
@@ -38,20 +37,36 @@ public:
     {
         ciphertext_info = StringAnalysis (str);
         for (unsigned int i = 0; i < 26; i++)
+        {
             correlation_frequency[i] = 0.0;
+        }
         plaintext = "";
+        key_length = 0;
     }
 
-    // Deciphering Subroutines
-    void calc_correlation();
+    // Deciphering Methods
+    void calc_correlations ();
+    void decrypt_caesar_cipher (char);
     void analyze_ciphertext ();
+
+    // Output Functions
+    void print_correlations();
+    void print_deciphered_caesars();
+
+    // Accessors
+    std::string get_plaintext () { return plaintext; }
+    std::string get_ciphertext () { return ciphertext_info.get_string(); }
 
 private:
 
     StringAnalysis ciphertext_info;
     double correlation_frequency[26];
 
+    // Output variable for decryption methods
     std::string plaintext;
+
+    // Used mostly for the Vigenere cipher
+    unsigned int key_length;
 
 };
 
