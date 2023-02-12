@@ -189,6 +189,17 @@ void StringAnalysis::print_frequency_profile ()
 
 // === Accessors ==================================================================================
 
+/**
+ * @fn StringAnalysis::get_char_freq
+ * 
+ * @brief Returns the frequency of a character within the stored data_string
+ * 
+ * @param c The character to be searched for within the char_frequencies array.
+ * @return A double containing the frequency of the character; defaults to 0.0 if not found.
+ * 
+ * @pre char_frequencies should be properly initialized using gen_char_frequency_profile.
+ * 
+ */
 double StringAnalysis::get_char_freq (char c)
 {
     unsigned int frequency_list_length = char_frequencies.size();

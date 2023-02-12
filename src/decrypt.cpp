@@ -69,6 +69,61 @@ void DecryptEngine::decrypt_caesar_cipher (char key)
 }
 
 /**
+ * 
+ * 
+ */
+char DecryptEngine::decrypt_caesar_cipher (char ct, char key)
+{
+    return ((((ct - 'A') + 26) - (key - 'A')) % 26) + 'A';
+}
+
+/**
+ * @fn DecryptEngine::calc_key_length
+ * 
+ * @brief Utilizes a formula to calculate an estimated key length for some ciphertext.
+ * 
+ * @pre ciphertext_info has calculated IC for the string.
+ * @post Member data key_length contains an estimated key length for the ciphertext.
+ * 
+ */
+void DecryptEngine::calc_key_length()
+{
+    double key_estimate = 0.0;
+
+    key_estimate = (0.027 * (double)(ciphertext_info.get_string_length())) / 
+                   (((double)(ciphertext_info.get_string_length()) - 1)*ciphertext_info.get_IC() + 0.065 - (0.038 * (double)(ciphertext_info.get_string_length())));
+
+    key_length = std::round (key_estimate);
+}
+
+/**
+ * @fn DecryptEngine::split_ciphertext
+ * 
+ * @brief Splits a ciphertext into a number of sub-strings based on the estimated length of the key.
+ * 
+ * @pre Member data key_length has a non-zero value in it.
+ * @post Sub-strings of characters from the ciphertext are generated. 
+ * 
+ */
+void DecryptEngine::split_ciphertext()
+{
+    unsigned int i = 0, ct_length = ciphertext_info.get_string_length();
+    std::string temp_ct = get_ciphertext();
+
+    // Initialize vectors needed for split operation
+    for (i = 0; i < key_length; i++)
+    {
+        split_alphabet.push_back("");
+    }
+
+    // Generate sub-strings
+    for (i = 0; i < ct_length; i++)
+    {
+        split_alphabet[i % key_length] += temp_ct[i];
+    }
+}
+
+/**
  * @fn DecryptEngine::analyze_ciphertext
  * 
  * @brief Creates an analysis of the ciphertext stored in ciphertext_info.
@@ -83,6 +138,63 @@ void DecryptEngine::analyze_ciphertext()
     // Calling calculate_IC should call the needed functions to analyze char instances and frequency
     ciphertext_info.calculate_IC();
     calc_correlations();
+    calc_key_length();
+}
+
+/**
+ * 
+ * 
+ * 
+ */
+void DecryptEngine::decrypt_vigenere_cipher (std::string ct, std::string key)
+{
+    plaintext = "";
+
+    unsigned int ct_size = ct.size(), k_size = key.size();
+    for (unsigned int i = 0; i < ct_size; i++)
+    {
+        plaintext += decrypt_caesar_cipher (ct[i], key[i % k_size]);
+    }
+}
+
+/**
+ * @fn DecryptEngine::process_caesar
+ * 
+ * @brief A wrapper for the analyze_ciphertext method.
+ * 
+ */
+void DecryptEngine::process_caesar()
+{
+    analyze_ciphertext();
+    highest_correlation = std::distance (correlation_frequency,
+                          std::max_element (correlation_frequency, correlation_frequency + 25));
+}
+
+/**
+ * @fn DecryptEngine::process_vigenere
+ *
+ * @brief Wrapper function for all Vigenere cipher-related functions.
+ * 
+ * @pre Ciphertext has been set in ciphertext_info
+ * @post The Vigenere cipher is decoded to a close approximation using formulae.
+ *  
+ */
+void DecryptEngine::process_vigenere()
+{
+    analyze_ciphertext();
+    split_ciphertext();
+
+    // TODO: Don't do this... Re-instantiating a class every loop iteration is stupid, but currently
+    //       there is no member method that changes the needed aspects for changing the ciphertext.
+    unsigned int i = 0;
+    for (i = 0; i < key_length; i++)
+    {
+        DecryptEngine temp_dc (split_alphabet[i]);
+        temp_dc.process_caesar();
+        calculated_key += temp_dc.most_likely_key();
+    }
+
+    decrypt_vigenere_cipher (ciphertext_info.get_string(), calculated_key);
 }
 
 
@@ -117,7 +229,9 @@ void DecryptEngine::print_deciphered_caesars()
     for (i = 0; i < 26; i++)
     {
         decrypt_caesar_cipher((char)(i + 'A'));
-        std::cout << (char)(i + 'A') << ", "  << correlation_frequency[i] << ": " << plaintext
-                  << std::endl;
+        std::cout << (char)(i + 'A') << ", "  << correlation_frequency[i] << ": " << plaintext;
+        if (i == highest_correlation)
+            std::cout << '*';
+        std::cout << std::endl;
     }
 }

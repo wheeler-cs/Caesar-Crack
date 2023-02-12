@@ -15,6 +15,8 @@
 
 #include "StringAnalysis.hpp"
 
+#include <cmath>
+
 // Frequencies of each letter of the alphabet (ignoring case)
 const double ALPHABET_FREQUENCIES[] = { 0.080, 0.015, 0.030, 0.040, 0.130, 0.020, 0.015, 0.060,
                                         0.065, 0.005, 0.005, 0.035, 0.030, 0.070, 0.080, 0.020,
@@ -40,14 +42,22 @@ public:
         {
             correlation_frequency[i] = 0.0;
         }
+        highest_correlation = 0;
         plaintext = "";
         key_length = 0;
+        calculated_key = "";
     }
 
     // Deciphering Methods
     void calc_correlations ();
     void decrypt_caesar_cipher (char);
+    char decrypt_caesar_cipher (char, char);
+    void calc_key_length();
+    void split_ciphertext();
     void analyze_ciphertext ();
+    void decrypt_vigenere_cipher (std::string, std::string);
+    void process_caesar ();
+    void process_vigenere ();
 
     // Output Functions
     void print_correlations();
@@ -56,17 +66,22 @@ public:
     // Accessors
     std::string get_plaintext () { return plaintext; }
     std::string get_ciphertext () { return ciphertext_info.get_string(); }
+    double get_IC () { return ciphertext_info.get_IC(); }
+    char most_likely_key() { return (char)highest_correlation + 'A'; }
 
 private:
 
     StringAnalysis ciphertext_info;
     double correlation_frequency[26];
+    unsigned int highest_correlation;
 
     // Output variable for decryption methods
     std::string plaintext;
 
     // Used mostly for the Vigenere cipher
     unsigned int key_length;
+    std::vector <std::string> split_alphabet;
+    std::string calculated_key;
 
 };
 

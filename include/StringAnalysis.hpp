@@ -44,6 +44,7 @@ public:
 
     // Accessors
     std::string get_string () { return data_string; }
+    unsigned int get_string_length () { return data_string.size(); }
     double get_IC () { return index_of_coincidence; }
     double get_char_freq (char);
 
