@@ -35,6 +35,15 @@ class DecryptEngine {
 public:
 
     // Ctors
+    DecryptEngine ()
+    {
+        ciphertext_info = StringAnalysis();
+        highest_correlation = 0;
+        plaintext = "";
+        key_length = 0;
+        calculated_key = "";
+    }
+
     DecryptEngine (const std::string& str)
     {
         ciphertext_info = StringAnalysis (str);
@@ -62,6 +71,12 @@ public:
     // Output Functions
     void print_correlations();
     void print_deciphered_caesars();
+    void print_plaintext() { std::cout << plaintext << '\n'; }
+    void print_decrypted_high_corr();
+    void print_vigenere_info();
+
+    // Mutators
+    void set_ciphertext (const std::string& str){ ciphertext_info.set_string (str); }
 
     // Accessors
     std::string get_plaintext () { return plaintext; }
