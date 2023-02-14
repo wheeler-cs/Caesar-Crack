@@ -64,7 +64,8 @@ void DecryptEngine::decrypt_caesar_cipher (char key)
     unsigned int i = 0, str_len = plaintext.size();
     for (i = 0; i < str_len; i++)
     {
-        plaintext[i] = ((((plaintext[i] - 'A') + 26) - (key - 'A')) % 26) + 'A';
+        if (plaintext[i] != ' ')
+            plaintext[i] = ((((plaintext[i] - 'A') + 26) - (key - 'A')) % 26) + 'A';
     }
 }
 
@@ -147,7 +148,7 @@ void DecryptEngine::split_ciphertext()
  */
 void DecryptEngine::analyze_ciphertext()
 {
-    ciphertext_info.rm_data_string_char (' ');
+    //ciphertext_info.rm_data_string_char (' ');
     // Calling calculate_IC should call the needed functions to analyze char instances and frequency
     ciphertext_info.calculate_IC();
     calc_correlations();
@@ -202,6 +203,7 @@ void DecryptEngine::process_caesar()
  */
 void DecryptEngine::process_vigenere()
 {
+    ciphertext_info.rm_data_string_char (' ');
     analyze_ciphertext();
     split_ciphertext();
 

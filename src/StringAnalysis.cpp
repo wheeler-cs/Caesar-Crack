@@ -137,6 +137,18 @@ void StringAnalysis::calculate_IC ()
     if ((char_frequencies.size() == 0) && (data_string.size() > 0))
         gen_char_frequency_profile();
 
+    // Remove all spaces from temporary text as true ciphertext length is needed for algorithm
+    std::string temp_dat_str = data_string;
+    for(unsigned int i = 0; i < temp_dat_str.size();)
+    {
+        if (temp_dat_str[i] == ' ')
+        {
+            temp_dat_str.erase (std::remove (temp_dat_str.begin(), temp_dat_str.end(), ' '), temp_dat_str.end());
+        }
+        else
+            i++;
+    }
+
     // Calculate the IC summation's multiplier based on input string size
     double IC_mult = 1.0 / (((double)data_string.size()) * ((double)data_string.size() - 1.0));
     unsigned int IC_summation = 0;
